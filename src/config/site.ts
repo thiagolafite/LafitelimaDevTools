@@ -15,10 +15,10 @@ export interface CategoryInfo {
 
 export const siteConfig = {
   name: "lafitelimadev.tools",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://lafitelimadev.tools",
-  ogImage: "https://lafitelimadev.tools/og.png",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://devtools.lafitelima.com.br",
+  ogImage: "https://devtools.lafitelima.com.br/og.png",
   creator: "Lafite Lima Dev",
-  contactEmail: "contact@lafitelimadev.tools",
+  contactEmail: "contact@lafitelima.com.br",
   defaultLanguage: "en" as SupportedLanguage,
   supportedLanguages: ["en", "pt"] as const,
   // Google SEO, AdSense & Verification Parameters
