@@ -8,9 +8,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [];
 
-  // 1. Home Pages (EN & PT)
+  // 1. Root & Home Pages
   entries.push({
-    url: `${baseUrl}/en`,
+    url: `${baseUrl}`,
     lastModified: now,
     changeFrequency: "daily",
     priority: 1.0,
@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         en: `${baseUrl}/en`,
         "pt-BR": `${baseUrl}/pt`,
         pt: `${baseUrl}/pt`,
-        "x-default": `${baseUrl}/en`,
+        "x-default": `${baseUrl}`,
       },
     },
   });
@@ -34,7 +34,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
         en: `${baseUrl}/en`,
         "pt-BR": `${baseUrl}/pt`,
         pt: `${baseUrl}/pt`,
-        "x-default": `${baseUrl}/en`,
+        "x-default": `${baseUrl}`,
+      },
+    },
+  });
+
+  entries.push({
+    url: `${baseUrl}/en`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 1.0,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/en`,
+        "pt-BR": `${baseUrl}/pt`,
+        pt: `${baseUrl}/pt`,
+        "x-default": `${baseUrl}`,
       },
     },
   });
@@ -46,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const ptUrl = `${baseUrl}/pt/${route}`;
 
     entries.push({
-      url: enUrl,
+      url: ptUrl,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
@@ -55,13 +70,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
           en: enUrl,
           "pt-BR": ptUrl,
           pt: ptUrl,
-          "x-default": enUrl,
+          "x-default": ptUrl,
         },
       },
     });
 
     entries.push({
-      url: ptUrl,
+      url: enUrl,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
@@ -79,7 +94,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 3. Category Pages
   for (const cat of siteConfig.categories) {
     entries.push({
-      url: `${baseUrl}/en/categories/${cat.id}`,
+      url: `${baseUrl}/pt/categories/${cat.id}`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -88,13 +103,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
           en: `${baseUrl}/en/categories/${cat.id}`,
           "pt-BR": `${baseUrl}/pt/categories/${cat.id}`,
           pt: `${baseUrl}/pt/categories/${cat.id}`,
-          "x-default": `${baseUrl}/en/categories/${cat.id}`,
+          "x-default": `${baseUrl}/pt/categories/${cat.id}`,
         },
       },
     });
 
     entries.push({
-      url: `${baseUrl}/pt/categories/${cat.id}`,
+      url: `${baseUrl}/en/categories/${cat.id}`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -115,7 +130,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const ptUrl = `${baseUrl}/pt/tools/${tool.slugs.pt}`;
 
     entries.push({
-      url: enUrl,
+      url: ptUrl,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -124,13 +139,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
           en: enUrl,
           "pt-BR": ptUrl,
           pt: ptUrl,
-          "x-default": enUrl,
+          "x-default": ptUrl,
         },
       },
     });
 
     entries.push({
-      url: ptUrl,
+      url: enUrl,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
