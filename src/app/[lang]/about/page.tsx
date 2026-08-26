@@ -49,7 +49,9 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
       canonical: `${siteConfig.url}/${lang}/about`,
       languages: {
         en: `${siteConfig.url}/en/about`,
+        "pt-BR": `${siteConfig.url}/pt/about`,
         pt: `${siteConfig.url}/pt/about`,
+        "x-default": `${siteConfig.url}/en/about`,
       },
     },
   };

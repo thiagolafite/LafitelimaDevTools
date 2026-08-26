@@ -37,7 +37,9 @@ export async function generateMetadata({ params }: PrivacyPageProps): Promise<Me
       canonical: `${siteConfig.url}/${lang}/privacy`,
       languages: {
         en: `${siteConfig.url}/en/privacy`,
+        "pt-BR": `${siteConfig.url}/pt/privacy`,
         pt: `${siteConfig.url}/pt/privacy`,
+        "x-default": `${siteConfig.url}/en/privacy`,
       },
     },
   };
