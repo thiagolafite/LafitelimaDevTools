@@ -10,9 +10,8 @@ import {
   EyeOff,
   ArrowRight,
   ShieldCheck,
-  Sparkles,
-  KeyRound,
   CheckCircle2,
+  Info,
 } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import { SupportedLanguage } from "@/config/site";
@@ -31,8 +30,6 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [adminCode, setAdminCode] = useState("");
-  const [showAdminCodeField, setShowAdminCodeField] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +49,7 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(name, email, password, adminCode);
+      await register(name, email, password);
     } finally {
       setLoading(false);
     }
@@ -88,12 +85,12 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
                 ? "Entrar na sua Conta"
                 : "Sign In to Your Account"
               : isPt
-              ? "Criar Nova Conta"
+              ? "Cadastre-se na Plataforma"
               : "Create New Account"}
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
             {isPt
-              ? "Acesse seus favoritos, histórico e recursos exclusivos."
+              ? "Acesse seus favoritos, histórico e recursos da plataforma."
               : "Access your saved tools, history, and preferences."}
           </p>
         </div>
@@ -137,7 +134,7 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="dev@empresa.com"
+                  placeholder="seu-email@dominio.com"
                   autoFocus
                   className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
@@ -174,7 +171,7 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
               disabled={loading}
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90 transition-all disabled:opacity-50"
             >
-              <span>{loading ? (isPt ? "Verificando..." : "Signing in...") : isPt ? "Entrar" : "Sign In"}</span>
+              <span>{loading ? (isPt ? "Entrando..." : "Signing in...") : isPt ? "Entrar na Conta" : "Sign In"}</span>
               <ArrowRight className="h-4 w-4" />
             </button>
           </form>
@@ -211,7 +208,7 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="dev@empresa.com"
+                  placeholder="seu-email@dominio.com"
                   className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -243,31 +240,13 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
               </div>
             </div>
 
-            {/* Optional Admin Key Toggle */}
-            <div className="pt-1">
-              {!showAdminCodeField ? (
-                <button
-                  type="button"
-                  onClick={() => setShowAdminCodeField(true)}
-                  className="text-[11px] text-muted-foreground/80 hover:text-primary transition-colors flex items-center gap-1"
-                >
-                  <KeyRound className="h-3 w-3" />
-                  <span>{isPt ? "Possui chave de administrador?" : "Have an admin authorization code?"}</span>
-                </button>
-              ) : (
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-1.5">
-                  <label className="block text-[11px] font-bold text-foreground">
-                    {isPt ? "Chave de Administrador (Opcional)" : "Admin Key (Optional)"}
-                  </label>
-                  <input
-                    type="password"
-                    value={adminCode}
-                    onChange={(e) => setAdminCode(e.target.value)}
-                    placeholder="Chave mestra..."
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                  />
-                </div>
-              )}
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex items-start gap-2">
+              <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                {isPt
+                  ? "Por questões de segurança e controle de acesso, novos cadastros passam por aprovação prévia do Administrador antes da liberação do primeiro login."
+                  : "For security and access control, new registrations undergo Administrator approval before first login."}
+              </p>
             </div>
 
             <button
@@ -275,7 +254,7 @@ export function AuthModal({ lang = "pt" }: AuthModalProps) {
               disabled={loading}
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90 transition-all disabled:opacity-50"
             >
-              <span>{loading ? (isPt ? "Criando conta..." : "Creating account...") : isPt ? "Finalizar Cadastro" : "Create Account"}</span>
+              <span>{loading ? (isPt ? "Enviando solicitação..." : "Submitting...") : isPt ? "Solicitar Cadastro" : "Submit Registration"}</span>
               <ArrowRight className="h-4 w-4" />
             </button>
           </form>

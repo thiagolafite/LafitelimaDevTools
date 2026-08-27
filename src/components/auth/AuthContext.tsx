@@ -20,7 +20,7 @@ interface AuthContextType {
   openAuthModal: (tab?: "login" | "register") => void;
   closeAuthModal: () => void;
   login: (email: string, pass: string) => Promise<boolean>;
-  register: (name: string, email: string, pass: string, adminCode?: string) => Promise<boolean>;
+  register: (name: string, email: string, pass: string) => Promise<boolean>;
   logout: () => void;
   toggleFavorite: (toolId: string) => void;
   isFavorite: (toolId: string) => boolean;
@@ -54,7 +54,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (res.success && res.user) {
       setUser(res.user);
       setIsAuthModalOpen(false);
-      toast.success(`Bem-vindo de volta, ${res.user.name}!`);
+      toast.success(
+        res.user.role === "admin"
+          ? `Bem-vindo, Administrador ${res.user.name} 👑`
+          : `Bem-vindo de volta, ${res.user.name}!`
+      );
       return true;
     } else {
       toast.error(res.error || "Erro ao efetuar login.");
@@ -63,15 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const register = useCallback(
-    async (name: string, email: string, pass: string, adminCode?: string): Promise<boolean> => {
-      const res = await registerUser(name, email, pass, adminCode);
-      if (res.success && res.user) {
-        setUser(res.user);
+    async (name: string, email: string, pass: string): Promise<boolean> => {
+      const res = await registerUser(name, email, pass);
+      if (res.success) {
         setIsAuthModalOpen(false);
-        toast.success(
-          res.user.role === "admin"
-            ? `Conta de Administrador criada com sucesso! Olá, ${res.user.name} 👑`
-            : `Conta criada com sucesso! Bem-vindo, ${res.user.name}!`
+        toast.info(
+          "Solicitação enviada com sucesso! Seu cadastro está aguardando a aprovação do Administrador.",
+          { duration: 6000 }
         );
         return true;
       } else {

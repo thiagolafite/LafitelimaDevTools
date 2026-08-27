@@ -43,6 +43,8 @@ import {
   getRegisteredUsers,
   updateUserRole,
   deleteUser,
+  approveUser,
+  rejectUser,
   getCurrentUser,
 } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -961,9 +963,9 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
       )}
 
-      {/* TAB 5: REGISTERED USERS MANAGEMENT */}
+      {/* TAB 5: REGISTERED USERS & APPROVAL QUEUE */}
       {activeTab === "users" && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* User Stats Overview */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
@@ -976,34 +978,114 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <p className="mt-1 text-[11px] text-muted-foreground">Contas registradas no sistema</p>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-wider text-amber-500">
-                Administradores 👑
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                Aguardando Sua Aprovação ⏳
               </span>
-              <div className="mt-2 text-2xl font-extrabold text-amber-500">
-                {usersList.filter((u) => u.role === "admin").length}
+              <div className="mt-2 text-2xl font-extrabold text-amber-600 dark:text-amber-400">
+                {usersList.filter((u) => u.status === "pending_approval").length}
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">Com acesso a este painel</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Cadastros bloqueados até aprovação</p>
             </div>
 
-            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-                Usuários Comuns
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Usuários Aprovados & Ativos ✅
               </span>
-              <div className="mt-2 text-2xl font-extrabold text-primary">
-                {usersList.filter((u) => u.role === "user").length}
+              <div className="mt-2 text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                {usersList.filter((u) => u.status === "approved").length}
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">Acesso padrão aos utilitários</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Com acesso liberado à plataforma</p>
             </div>
           </div>
 
-          {/* Users List Table */}
+          {/* SECTION A: PENDING APPROVALS QUEUE */}
+          {usersList.filter((u) => u.status === "pending_approval").length > 0 && (
+            <div className="rounded-2xl border-2 border-amber-500/40 bg-amber-500/5 shadow-md overflow-hidden">
+              <div className="p-5 border-b border-amber-500/20 bg-amber-500/10 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-white font-bold text-xs">
+                    ⏳
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">
+                      Fila de Aprovação de Cadastros ({usersList.filter((u) => u.status === "pending_approval").length})
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Estes usuários tentaram se cadastrar e aguardam sua autorização para fazer login
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="divide-y divide-amber-500/20">
+                {usersList
+                  .filter((u) => u.status === "pending_approval")
+                  .map((user) => {
+                    const currentUser = getCurrentUser();
+                    return (
+                      <div
+                        key={user.id}
+                        className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/60 hover:bg-card transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-white font-bold text-sm">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-foreground">{user.name}</p>
+                            <p className="font-mono text-xs text-muted-foreground">{user.email}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              Solicitado em: {new Date(user.createdAt).toLocaleString("pt-BR")}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (currentUser) {
+                                approveUser(currentUser.id, user.id);
+                                setUsersList(getRegisteredUsers());
+                                toast.success(`Cadastro de ${user.name} aprovado com sucesso!`);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+                          >
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span>Aprovar Cadastro</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (currentUser && confirm(`Recusar o cadastro de ${user.name}?`)) {
+                                rejectUser(currentUser.id, user.id);
+                                setUsersList(getRegisteredUsers());
+                                toast.info(`Cadastro de ${user.name} recusado.`);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/10 hover:bg-destructive/20 px-3 py-2 text-xs font-semibold text-destructive transition-colors"
+                          >
+                            <XCircle className="h-4 w-4" />
+                            <span>Recusar</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
+          {/* SECTION B: APPROVED USERS TABLE */}
           <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
             <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-foreground">Contas Cadastradas</h3>
+                <h3 className="text-base font-bold text-foreground">Usuários Aprovados & Administradores</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Gerencie permissões, papéis de acesso e visualização de contas
+                  Contas ativas com acesso liberado aos utilitários da plataforma
                 </p>
               </div>
               <button
@@ -1019,119 +1101,143 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
               </button>
             </div>
 
-            {usersList.length === 0 ? (
-              <div className="p-12 text-center text-muted-foreground space-y-2">
-                <Users className="mx-auto h-10 w-10 opacity-40" />
-                <p className="text-xs">Nenhum usuário registrado além do administrador.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-b border-border bg-muted/40 text-[11px] font-bold uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-5 py-3.5">Usuário</th>
-                      <th className="px-5 py-3.5">E-mail</th>
-                      <th className="px-5 py-3.5">Papel / Nível</th>
-                      <th className="px-5 py-3.5">Data de Cadastro</th>
-                      <th className="px-5 py-3.5">Favoritos</th>
-                      <th className="px-5 py-3.5 text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {usersList.map((user) => {
-                      const currentUser = getCurrentUser();
-                      const isMe = currentUser?.id === user.id;
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-border bg-muted/40 text-[11px] font-bold uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-5 py-3.5">Usuário</th>
+                    <th className="px-5 py-3.5">E-mail</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5">Nível</th>
+                    <th className="px-5 py-3.5">Data de Cadastro</th>
+                    <th className="px-5 py-3.5 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {usersList.map((user) => {
+                    const currentUser = getCurrentUser();
+                    const isMe = currentUser?.id === user.id;
 
-                      return (
-                        <tr key={user.id} className="hover:bg-muted/20 transition-colors">
-                          <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-2.5">
-                              <div
-                                className={cn(
-                                  "flex h-8 w-8 items-center justify-center rounded-lg font-bold text-white text-xs shrink-0",
-                                  user.avatarColor || "bg-primary"
-                                )}
-                              >
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <span className="font-semibold text-foreground">
-                                {user.name} {isMe && <span className="text-[10px] text-primary font-bold">(Você)</span>}
-                              </span>
-                            </div>
-                          </td>
-
-                          <td className="px-5 py-3.5 font-mono text-muted-foreground">
-                            {user.email}
-                          </td>
-
-                          <td className="px-5 py-3.5">
-                            <span
+                    return (
+                      <tr key={user.id} className="hover:bg-muted/20 transition-colors">
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div
                               className={cn(
-                                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
-                                user.role === "admin"
-                                  ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                                  : "bg-muted text-muted-foreground"
+                                "flex h-8 w-8 items-center justify-center rounded-lg font-bold text-white text-xs shrink-0",
+                                user.avatarColor || "bg-primary"
                               )}
                             >
-                              {user.role === "admin" ? "Admin 👑" : "Usuário"}
+                              {user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="font-semibold text-foreground">
+                              {user.name} {isMe && <span className="text-[10px] text-primary font-bold">(Você)</span>}
                             </span>
-                          </td>
+                          </div>
+                        </td>
 
-                          <td className="px-5 py-3.5 text-muted-foreground">
-                            {new Date(user.createdAt).toLocaleDateString("pt-BR", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </td>
+                        <td className="px-5 py-3.5 font-mono text-muted-foreground">
+                          {user.email}
+                        </td>
 
-                          <td className="px-5 py-3.5 font-mono text-muted-foreground">
-                            {user.favoriteTools?.length || 0}
-                          </td>
-
-                          <td className="px-5 py-3.5 text-right space-x-2">
-                            {!isMe && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const newRole = user.role === "admin" ? "user" : "admin";
-                                    if (currentUser) {
-                                      updateUserRole(currentUser.id, user.id, newRole);
-                                      setUsersList(getRegisteredUsers());
-                                      toast.success(
-                                        `Papel de ${user.name} alterado para ${newRole === "admin" ? "Admin" : "Usuário"}`
-                                      );
-                                    }
-                                  }}
-                                  className="inline-flex rounded-lg border border-border px-2.5 py-1 text-[11px] font-semibold hover:bg-muted transition-colors"
-                                >
-                                  {user.role === "admin" ? "Rebaixar para Usuário" : "Promover a Admin 👑"}
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (currentUser && confirm(`Deseja realmente excluir a conta de ${user.name}?`)) {
-                                      deleteUser(currentUser.id, user.id);
-                                      setUsersList(getRegisteredUsers());
-                                      toast.success(`Conta de ${user.name} excluída.`);
-                                    }
-                                  }}
-                                  className="inline-flex rounded-lg border border-destructive/30 bg-destructive/10 px-2 py-1 text-[11px] font-semibold text-destructive hover:bg-destructive/20 transition-colors"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </button>
-                              </>
+                        <td className="px-5 py-3.5">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
+                              user.status === "approved"
+                                ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                : user.status === "pending_approval"
+                                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                : "bg-destructive/10 text-destructive border border-destructive/20"
                             )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                          >
+                            {user.status === "approved"
+                              ? "Aprovado"
+                              : user.status === "pending_approval"
+                              ? "Pendente"
+                              : "Recusado"}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-3.5">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
+                              user.role === "admin"
+                                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                : "bg-muted text-muted-foreground"
+                            )}
+                          >
+                            {user.role === "admin" ? "Admin 👑" : "Usuário"}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-3.5 text-muted-foreground">
+                          {new Date(user.createdAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+
+                        <td className="px-5 py-3.5 text-right space-x-2">
+                          {!isMe && user.id !== "usr_master_admin_001" && (
+                            <>
+                              {user.status === "pending_approval" && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (currentUser) {
+                                      approveUser(currentUser.id, user.id);
+                                      setUsersList(getRegisteredUsers());
+                                      toast.success(`Cadastro de ${user.name} aprovado!`);
+                                    }
+                                  }}
+                                  className="inline-flex rounded-lg bg-emerald-600 hover:bg-emerald-700 px-2.5 py-1 text-[11px] font-bold text-white transition-colors"
+                                >
+                                  Aprovar
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newRole = user.role === "admin" ? "user" : "admin";
+                                  if (currentUser) {
+                                    updateUserRole(currentUser.id, user.id, newRole);
+                                    setUsersList(getRegisteredUsers());
+                                    toast.success(
+                                      `Papel de ${user.name} alterado para ${newRole === "admin" ? "Admin" : "Usuário"}`
+                                    );
+                                  }
+                                }}
+                                className="inline-flex rounded-lg border border-border px-2.5 py-1 text-[11px] font-semibold hover:bg-muted transition-colors"
+                              >
+                                {user.role === "admin" ? "Rebaixar para Usuário" : "Promover a Admin 👑"}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (currentUser && confirm(`Deseja realmente excluir a conta de ${user.name}?`)) {
+                                    deleteUser(currentUser.id, user.id);
+                                    setUsersList(getRegisteredUsers());
+                                    toast.success(`Conta de ${user.name} excluída.`);
+                                  }
+                                }}
+                                className="inline-flex rounded-lg border border-destructive/30 bg-destructive/10 px-2 py-1 text-[11px] font-semibold text-destructive hover:bg-destructive/20 transition-colors"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
