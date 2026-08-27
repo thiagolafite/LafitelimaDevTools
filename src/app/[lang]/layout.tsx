@@ -9,6 +9,8 @@ import { Footer } from "@/components/layout/Footer";
 import { CommandMenu } from "@/components/layout/CommandMenu";
 import { ClientToaster } from "@/components/layout/ClientToaster";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { AuthProvider } from "@/components/auth/AuthContext";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { trackPageView, logTelemetryError } from "@/lib/telemetry";
 
 export default function LocaleLayout({
@@ -68,18 +70,21 @@ export default function LocaleLayout({
       enableSystem
       disableTransitionOnChange
     >
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
-        <Navbar lang={lang} onOpenSearch={() => setIsSearchOpen(true)} />
-        <div className="flex-1">{children}</div>
-        <Footer lang={lang} />
-        <CommandMenu
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          lang={lang}
-        />
-        <CookieConsent lang={lang} />
-        <ClientToaster />
-      </div>
+      <AuthProvider>
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          <Navbar lang={lang} onOpenSearch={() => setIsSearchOpen(true)} />
+          <div className="flex-1">{children}</div>
+          <Footer lang={lang} />
+          <CommandMenu
+            isOpen={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            lang={lang}
+          />
+          <CookieConsent lang={lang} />
+          <AuthModal lang={lang} />
+          <ClientToaster />
+        </div>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

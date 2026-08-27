@@ -119,14 +119,6 @@ export function Footer({ lang }: FooterProps) {
                   {isPt ? "Contato & Suporte" : "Contact & Support"}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/admin"
-                  className="text-[11px] font-mono text-muted-foreground/60 hover:text-foreground"
-                >
-                  Admin Telemetry
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

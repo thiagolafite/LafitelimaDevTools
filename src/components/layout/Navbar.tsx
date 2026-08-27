@@ -15,9 +15,16 @@ import {
   Menu,
   X,
   Code2,
+  User as UserIcon,
+  LogOut,
+  ShieldAlert,
+  Crown,
+  Bookmark,
+  Sparkles,
 } from "lucide-react";
 import { SupportedLanguage, siteConfig, getTranslations } from "@/config/site";
 import { getToolBySlug } from "@/config/tools.config";
+import { useAuth } from "@/components/auth/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface NavbarProps {
@@ -32,12 +39,16 @@ export function Navbar({ lang, onOpenSearch }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const { user, isAuthenticated, isAdmin, openAuthModal, logout } = useAuth();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const t = getTranslations(lang);
+  const isPt = lang === "pt";
 
   // Calculate alternate language path for the current page
   const getAlternatePath = (targetLang: SupportedLanguage): string => {
@@ -48,7 +59,7 @@ export function Navbar({ lang, onOpenSearch }: NavbarProps) {
       return `/${targetLang}`;
     }
 
-    if (segments.length >= 2 && (segments[1] === "about" || segments[1] === "privacy" || segments[1] === "terms" || segments[1] === "contact")) {
+    if (segments.length >= 2 && (segments[1] === "about" || segments[1] === "privacy" || segments[1] === "terms" || segments[1] === "contact" || segments[1] === "account")) {
       return `/${targetLang}/${segments[1]}`;
     }
 
@@ -115,7 +126,7 @@ export function Navbar({ lang, onOpenSearch }: NavbarProps) {
           </nav>
         </div>
 
-        {/* Right: Actions (Search, Language, Theme, Mobile toggle) */}
+        {/* Right: Actions (Search, Auth, Language, Theme, Mobile toggle) */}
         <div className="flex items-center gap-2">
           {/* Search Trigger Button */}
           <button
@@ -130,6 +141,103 @@ export function Navbar({ lang, onOpenSearch }: NavbarProps) {
               {lang === "pt" ? "Ctrl K" : "⌘ K"}
             </kbd>
           </button>
+
+          {/* User Auth Section */}
+          {mounted && (
+            isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-2 rounded-xl border border-border bg-card p-1 pr-2.5 text-xs font-medium text-foreground hover:bg-muted transition-colors shadow-xs"
+                >
+                  <div
+                    className={cn(
+                      "flex h-7 w-7 items-center justify-center rounded-lg font-bold text-white text-xs",
+                      user.avatarColor || "bg-primary"
+                    )}
+                  >
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="max-w-[90px] truncate font-semibold hidden sm:inline">
+                    {user.name.split(" ")[0]}
+                  </span>
+                  {isAdmin && (
+                    <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  )}
+                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 z-50 mt-2 w-56 rounded-2xl border border-border bg-card p-2 shadow-xl animate-fade-in space-y-1">
+                      {/* User Info Header */}
+                      <div className="px-3 py-2 border-b border-border/60 pb-2.5">
+                        <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                        <span
+                          className={cn(
+                            "mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                            isAdmin
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                              : "bg-primary/10 text-primary"
+                          )}
+                        >
+                          {isAdmin ? (
+                            <>
+                              <Crown className="h-3 w-3" />
+                              <span>Admin Exclusivo</span>
+                            </>
+                          ) : (
+                            <span>Usuário Registrado</span>
+                          )}
+                        </span>
+                      </div>
+
+                      {/* Admin Exclusive Dashboard Link */}
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors"
+                        >
+                          <Crown className="h-4 w-4 shrink-0" />
+                          <span>Painel Administrativo</span>
+                        </Link>
+                      )}
+
+                      {/* Logout */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          logout();
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-colors font-medium"
+                      >
+                        <LogOut className="h-4 w-4 shrink-0" />
+                        <span>{isPt ? "Sair da Conta" : "Sign Out"}</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
+                className="flex items-center gap-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 px-3 py-1.5 text-xs font-bold text-primary transition-colors"
+              >
+                <UserIcon className="h-3.5 w-3.5" />
+                <span>{isPt ? "Entrar" : "Sign In"}</span>
+              </button>
+            )
+          )}
 
           {/* Language Selector Dropdown */}
           <div className="relative">
@@ -324,6 +432,15 @@ export function Navbar({ lang, onOpenSearch }: NavbarProps) {
             >
               {lang === "pt" ? "Contato" : "Contact"}
             </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block rounded-md px-3 py-1.5 text-xs font-bold text-amber-500 hover:text-amber-400"
+              >
+                👑 Painel Admin
+              </Link>
+            )}
           </div>
         </div>
       )}

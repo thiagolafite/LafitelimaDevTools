@@ -38,6 +38,13 @@ import {
   SearchQueryEvent,
   SupplyDemandAnalysis,
 } from "@/lib/telemetry";
+import {
+  User,
+  getRegisteredUsers,
+  updateUserRole,
+  deleteUser,
+  getCurrentUser,
+} from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 interface AdminDashboardProps {
@@ -45,14 +52,16 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"visitors" | "errors" | "tools" | "market">("visitors");
+  const [activeTab, setActiveTab] = useState<"visitors" | "errors" | "tools" | "market" | "users">("visitors");
   const [data, setData] = useState(() => getTelemetryData());
+  const [usersList, setUsersList] = useState<User[]>(() => getRegisteredUsers());
   const [errorSeverityFilter, setErrorSeverityFilter] = useState<string>("all");
   const [errorSearch, setErrorSearch] = useState<string>("");
   const [selectedError, setSelectedError] = useState<ErrorLog | null>(null);
 
   const refreshData = () => {
     setData(getTelemetryData());
+    setUsersList(getRegisteredUsers());
   };
 
   useEffect(() => {
@@ -343,6 +352,20 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
         >
           <Flame className="h-4 w-4 text-amber-500" />
           <span>Análise de Oferta vs. Demanda</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("users")}
+          className={cn(
+            "flex items-center gap-2 border-b-2 px-4 py-3 text-xs font-bold transition-colors whitespace-nowrap",
+            activeTab === "users"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Users className="h-4 w-4 text-primary" />
+          <span>Usuários Cadastrados ({usersList.length})</span>
         </button>
       </div>
 
@@ -934,6 +957,181 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: REGISTERED USERS MANAGEMENT */}
+      {activeTab === "users" && (
+        <div className="space-y-6">
+          {/* User Stats Overview */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Total de Usuários
+              </span>
+              <div className="mt-2 text-2xl font-extrabold text-foreground">
+                {usersList.length}
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">Contas registradas no sistema</p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-amber-500">
+                Administradores 👑
+              </span>
+              <div className="mt-2 text-2xl font-extrabold text-amber-500">
+                {usersList.filter((u) => u.role === "admin").length}
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">Com acesso a este painel</p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                Usuários Comuns
+              </span>
+              <div className="mt-2 text-2xl font-extrabold text-primary">
+                {usersList.filter((u) => u.role === "user").length}
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">Acesso padrão aos utilitários</p>
+            </div>
+          </div>
+
+          {/* Users List Table */}
+          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-foreground">Contas Cadastradas</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Gerencie permissões, papéis de acesso e visualização de contas
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setUsersList(getRegisteredUsers());
+                  toast.success("Lista de usuários atualizada!");
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                <span>Atualizar</span>
+              </button>
+            </div>
+
+            {usersList.length === 0 ? (
+              <div className="p-12 text-center text-muted-foreground space-y-2">
+                <Users className="mx-auto h-10 w-10 opacity-40" />
+                <p className="text-xs">Nenhum usuário registrado além do administrador.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="border-b border-border bg-muted/40 text-[11px] font-bold uppercase text-muted-foreground">
+                    <tr>
+                      <th className="px-5 py-3.5">Usuário</th>
+                      <th className="px-5 py-3.5">E-mail</th>
+                      <th className="px-5 py-3.5">Papel / Nível</th>
+                      <th className="px-5 py-3.5">Data de Cadastro</th>
+                      <th className="px-5 py-3.5">Favoritos</th>
+                      <th className="px-5 py-3.5 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {usersList.map((user) => {
+                      const currentUser = getCurrentUser();
+                      const isMe = currentUser?.id === user.id;
+
+                      return (
+                        <tr key={user.id} className="hover:bg-muted/20 transition-colors">
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-2.5">
+                              <div
+                                className={cn(
+                                  "flex h-8 w-8 items-center justify-center rounded-lg font-bold text-white text-xs shrink-0",
+                                  user.avatarColor || "bg-primary"
+                                )}
+                              >
+                                {user.name.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-semibold text-foreground">
+                                {user.name} {isMe && <span className="text-[10px] text-primary font-bold">(Você)</span>}
+                              </span>
+                            </div>
+                          </td>
+
+                          <td className="px-5 py-3.5 font-mono text-muted-foreground">
+                            {user.email}
+                          </td>
+
+                          <td className="px-5 py-3.5">
+                            <span
+                              className={cn(
+                                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
+                                user.role === "admin"
+                                  ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                  : "bg-muted text-muted-foreground"
+                              )}
+                            >
+                              {user.role === "admin" ? "Admin 👑" : "Usuário"}
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-3.5 text-muted-foreground">
+                            {new Date(user.createdAt).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </td>
+
+                          <td className="px-5 py-3.5 font-mono text-muted-foreground">
+                            {user.favoriteTools?.length || 0}
+                          </td>
+
+                          <td className="px-5 py-3.5 text-right space-x-2">
+                            {!isMe && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newRole = user.role === "admin" ? "user" : "admin";
+                                    if (currentUser) {
+                                      updateUserRole(currentUser.id, user.id, newRole);
+                                      setUsersList(getRegisteredUsers());
+                                      toast.success(
+                                        `Papel de ${user.name} alterado para ${newRole === "admin" ? "Admin" : "Usuário"}`
+                                      );
+                                    }
+                                  }}
+                                  className="inline-flex rounded-lg border border-border px-2.5 py-1 text-[11px] font-semibold hover:bg-muted transition-colors"
+                                >
+                                  {user.role === "admin" ? "Rebaixar para Usuário" : "Promover a Admin 👑"}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (currentUser && confirm(`Deseja realmente excluir a conta de ${user.name}?`)) {
+                                      deleteUser(currentUser.id, user.id);
+                                      setUsersList(getRegisteredUsers());
+                                      toast.success(`Conta de ${user.name} excluída.`);
+                                    }
+                                  }}
+                                  className="inline-flex rounded-lg border border-destructive/30 bg-destructive/10 px-2 py-1 text-[11px] font-semibold text-destructive hover:bg-destructive/20 transition-colors"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}
