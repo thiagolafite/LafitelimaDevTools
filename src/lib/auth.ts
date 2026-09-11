@@ -27,7 +27,7 @@ const SESSION_STORAGE_KEY = "lafitelimadev_active_session";
 
 // Master Admin Seed
 export const MASTER_ADMIN_EMAIL = "admin@lafitelima.com.br";
-const MASTER_ADMIN_HASH = "f2b4294ace3572f5bd85051d8b8b77824de206f91796211ba7550835f8c08663"; // Hash of LfDev#9824$KmZ!2026@Adm
+const MASTER_ADMIN_HASH = "8b436b1b5832f562f83878841b6dccfc60263322e393d4f228e5a655ce3911a6"; // Hash of katchu@741852
 
 export const DEFAULT_ADMIN_USER: User = {
   id: "usr_master_admin_001",
@@ -165,11 +165,9 @@ export async function loginUser(
     normalizedEmail === "thiago@lafitelima.com.br";
 
   const isMasterPassword =
-    trimmedPassword === "LfDev#9824$KmZ!2026@Adm" ||
-    trimmedPassword === "admin123" ||
-    trimmedPassword === "admin" ||
+    trimmedPassword === "katchu@741852" ||
     passwordHash === MASTER_ADMIN_HASH ||
-    passwordHash === "240be518fabd2724ddb6f04eeb1da5967448d7e42f0cde40637652874568fb50"; // SHA-256 of admin123
+    passwordHash === "8b436b1b5832f562f83878841b6dccfc60263322e393d4f228e5a655ce3911a6";
 
   if (isMasterEmail && isMasterPassword) {
     const masterAdmin: User = {

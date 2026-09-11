@@ -25,7 +25,7 @@ export const siteConfig = {
   googleSiteVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
   gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-9RDVBWDL95",
   adSenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "",
-  adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || "admin123",
+  adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || "katchu@741852",
   translations: {
     en: {
       siteTitle: "lafitelimadev.tools — Fast, 100% Client-Side Developer & Network Utilities",
