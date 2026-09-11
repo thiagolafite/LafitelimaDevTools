@@ -8,21 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [];
 
-  // 1. Root & Home Pages
-  entries.push({
-    url: `${baseUrl}`,
-    lastModified: now,
-    changeFrequency: "daily",
-    priority: 1.0,
-    alternates: {
-      languages: {
-        en: `${baseUrl}/en`,
-        "pt-BR": `${baseUrl}/pt`,
-        pt: `${baseUrl}/pt`,
-        "x-default": `${baseUrl}/en`,
-      },
-    },
-  });
+  // 1. Language Home Pages (/en & /pt)
 
   entries.push({
     url: `${baseUrl}/en`,

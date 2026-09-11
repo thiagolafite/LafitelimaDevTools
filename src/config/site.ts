@@ -23,7 +23,7 @@ export const siteConfig = {
   supportedLanguages: ["en", "pt"] as const,
   // Google SEO, AdSense & Verification Parameters
   googleSiteVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
-  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "",
+  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-9RDVBWDL95",
   adSenseClientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "",
   adminPin: process.env.NEXT_PUBLIC_ADMIN_PIN || "admin123",
   translations: {
