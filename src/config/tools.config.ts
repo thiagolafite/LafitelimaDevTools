@@ -21,9 +21,29 @@ export interface ToolLocaleData {
 
 export interface ToolDefinition {
   id: string;
-  componentKey: "json-formatter" | "subnet-calculator" | "password-generator" | "base64-tool" | "hash-generator";
+  componentKey:
+    | "json-formatter"
+    | "subnet-calculator"
+    | "password-generator"
+    | "base64-tool"
+    | "hash-generator"
+    | "cron-parser"
+    | "regex-tester"
+    | "timestamp-converter"
+    | "curl-converter"
+    | "markdown-preview";
   category: "developer" | "network" | "security" | "converters";
-  iconName: "FileJson" | "Network" | "KeyRound" | "Binary" | "Hash";
+  iconName:
+    | "FileJson"
+    | "Network"
+    | "KeyRound"
+    | "Binary"
+    | "Hash"
+    | "Clock"
+    | "Code2"
+    | "Terminal"
+    | "FileText"
+    | "Sliders";
   isFeatured?: boolean;
   slugs: {
     en: string;
@@ -612,6 +632,551 @@ export const toolsRegistry: ToolDefinition[] = [
             question: "Qual algoritmo é o mais recomendado?",
             answer:
               "Para segurança, utilize SHA-256 ou SHA-512. O MD5 e o SHA-1 devem ser utilizados apenas para verificação rápida de integridade de arquivos não críticos.",
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: "cron-parser",
+    componentKey: "cron-parser",
+    category: "developer",
+    iconName: "Clock",
+    isFeatured: true,
+    slugs: {
+      en: "cron",
+      pt: "cron",
+    },
+    locales: {
+      en: {
+        name: "Cron Expression Parser & Generator",
+        shortDescription: "Parse, describe in plain text, calculate next execution times, and visually build cron expressions.",
+        metaTitle: "Cron Expression Parser & Visual Generator — 100% Private & Fast",
+        metaDescription:
+          "Free online Cron Expression Parser and Generator. Translate cron expressions to human-readable schedules, inspect upcoming execution times, and visually build crons.",
+        keywords: [
+          "cron parser",
+          "cron expression generator",
+          "crontab guru",
+          "cron schedule",
+          "cron job builder",
+          "next cron executions",
+        ],
+        howItWorks: {
+          title: "How the Cron Parser Works",
+          paragraphs: [
+            "Cron expressions are standard 5-part strings (Minute, Hour, Day of Month, Month, Day of Week) used to schedule recurring tasks in Unix systems, cloud crons, and task runners.",
+            "This tool decodes each field into natural plain English and calculates the next exact 5 execution dates and times directly in your browser without contacting any server.",
+          ],
+          steps: [
+            {
+              title: "1. Input Expression or Use Builder",
+              desc: "Type any 5-field cron string or use the interactive visual generator tabs.",
+            },
+            {
+              title: "2. Read Human Translation",
+              desc: "Instantly see the exact human-readable description of when your task will run.",
+            },
+            {
+              title: "3. Check Next Runs & Copy",
+              desc: "Inspect the next 5 execution timestamps and copy the expression with 1 click.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "What do the 5 cron fields represent?",
+            answer:
+              "From left to right: Minute (0-59), Hour (0-23), Day of Month (1-31), Month (1-12 or JAN-DEC), and Day of Week (0-7 or SUN-SAT, where both 0 and 7 are Sunday).",
+          },
+          {
+            question: "How do step values (e.g. */15) work?",
+            answer:
+              "An asterisk followed by a slash and number (e.g. */15 in the minute field) indicates execution every 15 units starting at 0 (dispatches at :00, :15, :30, :45).",
+          },
+        ],
+      },
+      pt: {
+        name: "Analisador e Gerador de Cron (Cron Parser)",
+        shortDescription: "Traduza expressões cron em português claro, visualize os próximos horários de execução e monte crons visualmente.",
+        metaTitle: "Analisador e Gerador de Expressões Cron Online — Rápido e Privado",
+        metaDescription:
+          "Ferramenta gratuita para analisar, traduzir e gerar expressões cron. Descubra os próximos disparos exatos e monte agendamentos visualmente no navegador.",
+        keywords: [
+          "analisador cron",
+          "gerador cron",
+          "cron expression parser",
+          "crontab brasil",
+          "agendamento cron",
+          "proximos disparos cron",
+        ],
+        howItWorks: {
+          title: "Como Funciona o Analisador de Expressões Cron",
+          paragraphs: [
+            "Expressões Cron são sequências padronizadas de 5 campos (Minuto, Hora, Dia do Mês, Mês e Dia da Semana) utilizadas para agendar tarefas recorrentes em servidores Linux, rotinas em nuvem e filas de processamento.",
+            "Nossa ferramenta decompõe cada segmento, traduz o cron para português legível em tempo real e calcula os próximos 5 horários exatos de disparo.",
+          ],
+          steps: [
+            {
+              title: "1. Digite a Expressão ou Monte Visualmente",
+              desc: "Insira uma expressão cron de 5 campos ou escolha os parâmetros no Construtor Visual.",
+            },
+            {
+              title: "2. Veja o Significado em Português",
+              desc: "Acompanhe a tradução instantânea em texto claro de quando o seu job será executado.",
+            },
+            {
+              title: "3. Visualize os Próximos Disparos",
+              desc: "Confira a tabela com as 5 próximas datas/horas exatas de execução.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "O que significa cada um dos 5 campos do Cron?",
+            answer:
+              "Da esquerda para a direita: 1º Minuto (0-59), 2º Hora (0-23), 3º Dia do Mês (1-31), 4º Mês (1-12 ou JAN-DEZ) e 5º Dia da Semana (0-7 ou DOM-SÁB, onde 0 e 7 representam Domingo).",
+          },
+          {
+            question: "Como funciona a sintaxe de passo (ex: */5)?",
+            answer:
+              "A barra representa um intervalo ou passo de repetição. Por exemplo, '*/5' no campo de minutos significa 'a cada 5 minutos' (minutos 0, 5, 10, 15, 20...).",
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: "regex-tester",
+    componentKey: "regex-tester",
+    category: "developer",
+    iconName: "Code2",
+    isFeatured: true,
+    slugs: {
+      en: "regex",
+      pt: "regex",
+    },
+    locales: {
+      en: {
+        name: "Regex Tester & Visualizer",
+        shortDescription: "Test, validate, and debug Regular Expressions with real-time match highlighting, group inspector, and replace mode.",
+        metaTitle: "Regex Tester & Visualizer Online — 100% Private & Fast",
+        metaDescription:
+          "Free online Regular Expression Tester with live match highlighting, capture group inspector, regex presets, and instant replacement preview.",
+        keywords: [
+          "regex tester",
+          "regex visualizer",
+          "regular expression online",
+          "regex debugger",
+          "test regex",
+          "regex replace",
+        ],
+        howItWorks: {
+          title: "How the Regex Tester Works",
+          paragraphs: [
+            "Regular Expressions (RegEx) are powerful patterns used for text search, validation, and string manipulation. This tool executes native JavaScript RegExp algorithms directly in your browser with zero latency.",
+            "It automatically segments the test string, color-highlights matching ranges, extracts capture groups ($1, $2), and allows live replacement testing without sending any payload to remote servers.",
+          ],
+          steps: [
+            {
+              title: "1. Enter Pattern & Flags",
+              desc: "Type your regular expression and toggle flags (g, i, m, s, u).",
+            },
+            {
+              title: "2. Input Test Text",
+              desc: "Paste your sample string to see matching segments highlighted in real-time.",
+            },
+            {
+              title: "3. Inspect Groups & Replace",
+              desc: "View match positions, capture groups, and test string replacements with 1 click.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "What are the common regex flags?",
+            answer:
+              "'g' enables global search for all matches; 'i' makes search case-insensitive; 'm' enables multiline mode (^ and $ match line starts/ends); 's' lets dot (.) match newlines.",
+          },
+          {
+            question: "Is my text data safe?",
+            answer:
+              "Yes. All regex evaluations and string processing occur 100% in your browser's local memory. No text or regex is transmitted across the network.",
+          },
+        ],
+      },
+      pt: {
+        name: "Testador e Depurador de Regex (Regex Tester)",
+        shortDescription: "Teste, valide e depure Expressões Regulares com destaque visual em tempo real, inspetor de grupos e substituição.",
+        metaTitle: "Testador de Expressões Regulares (Regex) Online — Rápido e Privado",
+        metaDescription:
+          "Ferramenta gratuita para testar expressões regulares em tempo real com destaque de matches, inspetor de grupos de captura, substituição e presets prontos.",
+        keywords: [
+          "testador de regex",
+          "regex tester",
+          "expressoes regulares online",
+          "depurador regex",
+          "validar regex",
+          "regex highlight",
+        ],
+        howItWorks: {
+          title: "Como Funciona o Testador de Expressões Regulares",
+          paragraphs: [
+            "Expressões Regulares (Regex) são padrões avançados de busca, validação e manipulação de texto. Esta ferramenta utiliza o motor nativo de RegExp do navegador para processamento instantâneo em microssegundos.",
+            "Ela segmenta o texto de entrada, aplica realce visual colorido nas ocorrências, lista os grupos de captura ($1, $2) e permite testar substituições em tempo real.",
+          ],
+          steps: [
+            {
+              title: "1. Digite a Expressão e Flags",
+              desc: "Insira o padrão regex e selecione as flags desejadas (g, i, m, s, u).",
+            },
+            {
+              title: "2. Insira o Texto de Teste",
+              desc: "Cole o texto para visualizar todos os matches destacados em tempo real.",
+            },
+            {
+              title: "3. Inspecione Grupos e Substituições",
+              desc: "Veja posições, linhas, colunas, grupos capturados e teste substituições.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "O que significam as flags (g, i, m, s, u)?",
+            answer:
+              "'g' (global) localiza todas as ocorrências; 'i' ignora maiúsculas/minúsculas; 'm' (multilinha) faz ^ e $ casarem com início e fim de cada linha; 's' (dotAll) permite que o ponto (.) case com quebras de linha.",
+          },
+          {
+            question: "Os dados digitados são enviados para a internet?",
+            answer:
+              "Não. A execução ocorre 100% no cliente (client-side) na memória RAM do seu navegador. Zero dados são enviados a servidores.",
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: "timestamp-converter",
+    componentKey: "timestamp-converter",
+    category: "converters",
+    iconName: "Clock",
+    isFeatured: true,
+    slugs: {
+      en: "timestamp",
+      pt: "timestamp",
+    },
+    locales: {
+      en: {
+        name: "Unix Timestamp & Timezone Converter",
+        shortDescription: "Convert Unix Epoch timestamps to human dates, compare world timezones, and convert calendar dates to epoch.",
+        metaTitle: "Unix Timestamp & World Timezone Converter — 100% Private & Fast",
+        metaDescription:
+          "Free online Unix Timestamp and Timezone Converter. Convert seconds and milliseconds to ISO 8601, RFC 2822, Brasília, UTC, New York, Tokyo and London times.",
+        keywords: [
+          "unix timestamp converter",
+          "epoch converter",
+          "timestamp to date",
+          "date to timestamp",
+          "utc converter",
+          "timezone comparison",
+        ],
+        howItWorks: {
+          title: "How the Unix Timestamp Converter Works",
+          paragraphs: [
+            "Unix Time (Epoch) is the number of seconds that have elapsed since midnight UTC on January 1, 1970. It is the universal standard for logging, database timestamps, and distributed system synchronization.",
+            "This tool provides real-time ticking epoch clocks, converts between seconds/milliseconds and human dates, and renders a side-by-side comparison across major global timezones.",
+          ],
+          steps: [
+            {
+              title: "1. Enter Timestamp or Date",
+              desc: "Paste an epoch timestamp or pick a date/time using the interactive selectors.",
+            },
+            {
+              title: "2. View Formatted Outputs",
+              desc: "Inspect ISO 8601, RFC 2822, local date, and relative time representations.",
+            },
+            {
+              title: "3. Compare Timezones & Copy",
+              desc: "Check local times in Brasília, UTC, New York, Tokyo, and London.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "What is the difference between 10-digit and 13-digit timestamps?",
+            answer:
+              "10-digit timestamps represent seconds since Unix epoch (standard in Unix/C/PHP). 13-digit timestamps represent milliseconds (standard in JavaScript/Java). This tool supports both automatically.",
+          },
+          {
+            question: "What is the Year 2038 Problem (Y2K38)?",
+            answer:
+              "On January 19, 2038, 32-bit signed Unix timestamps will overflow. Modern 64-bit systems handle timestamps safely for billions of years.",
+          },
+        ],
+      },
+      pt: {
+        name: "Conversor de Unix Timestamp e Fusos Horários",
+        shortDescription: "Converta timestamps Unix em datas legíveis, compare fusos horários globais e gere epochs a partir de datas.",
+        metaTitle: "Conversor de Unix Timestamp e Fusos Horários Online — Rápido e Privado",
+        metaDescription:
+          "Ferramenta gratuita para converter Unix Timestamp (segundos e ms) em datas legíveis (ISO 8601, Horário de Brasília, UTC, Nova York, Londres, Tóquio).",
+        keywords: [
+          "conversor timestamp",
+          "unix epoch converter",
+          "timestamp para data",
+          "data para timestamp",
+          "horario de brasilia timestamp",
+          "conversor de fuso horario",
+        ],
+        howItWorks: {
+          title: "Como Funciona o Conversor de Timestamp Unix",
+          paragraphs: [
+            "O Unix Timestamp (Tempo Epoch) representa a quantidade de segundos decorridos desde 1º de janeiro de 1970 às 00:00:00 UTC. É o formato padrão universal para bancos de dados, APIs e logs de sistemas.",
+            "Esta ferramenta converte instantaneamente timestamps de 10 dígitos (segundos) e 13 dígitos (milissegundos) em datas formatadas em múltiplos fusos horários de referência mundial.",
+          ],
+          steps: [
+            {
+              title: "1. Insira o Timestamp ou Data",
+              desc: "Cole um timestamp numérico ou defina ano, mês, dia e hora nos campos de entrada.",
+            },
+            {
+              title: "2. Veja os Formatos Padronizados",
+              desc: "Acompanhe formatos ISO 8601, RFC 2822, data local e tempo relativo.",
+            },
+            {
+              title: "3. Compare Fusos Horários",
+              desc: "Veja a equivalência de horário em Brasília (BRT), UTC, Nova York, Londres e Tóquio.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "Qual a diferença entre timestamp em segundos e em milissegundos?",
+            answer:
+              "Timestamps com 10 dígitos estão em segundos (usados em Linux, Python, PHP, C). Timestamps com 13 dígitos estão em milissegundos (usados nativamente em JavaScript com Date.now() e Java).",
+          },
+          {
+            question: "O que é o Horário de Brasília (BRT)?",
+            answer:
+              "O Horário Oficial de Brasília é definido pelo fuso UTC-3 (America/Sao_Paulo).",
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: "curl-converter",
+    componentKey: "curl-converter",
+    category: "converters",
+    iconName: "Terminal",
+    isFeatured: true,
+    slugs: {
+      en: "curl-converter",
+      pt: "conversor-curl",
+    },
+    locales: {
+      en: {
+        name: "cURL to Code Converter",
+        shortDescription: "Convert cURL commands to JavaScript Fetch, Axios, Python Requests, Go, PHP, C# and Rust code snippets.",
+        metaTitle: "cURL to Code Converter Online — Fetch, Axios, Python, Go — 100% Private",
+        metaDescription:
+          "Free online cURL to Code Converter. Convert curl terminal commands into clean, idiomatic JavaScript (fetch & axios), Python (requests), Go, PHP, Node.js, and C#.",
+        keywords: [
+          "curl converter",
+          "curl to fetch",
+          "curl to python",
+          "curl to axios",
+          "curl to go",
+          "curl parser online",
+        ],
+        howItWorks: {
+          title: "How the cURL Converter Works",
+          paragraphs: [
+            "cURL is the universal command-line utility for making HTTP network requests. When testing APIs, copying curl commands from browser DevTools is common practice.",
+            "This tool parses flags (-X, -H, -d, -u, -b, --data-raw), extracts URLs, headers, and request bodies, and automatically generates production-ready code snippets in your favorite programming languages.",
+          ],
+          steps: [
+            {
+              title: "1. Paste cURL Command",
+              desc: "Paste your raw multi-line or single-line curl terminal command.",
+            },
+            {
+              title: "2. Choose Target Language",
+              desc: "Select between Fetch, Axios, Python Requests, Go net/http, PHP, C#, and Rust.",
+            },
+            {
+              title: "3. Copy Code Snippet",
+              desc: "Copy clean, formatted code with 1 click to use in your application.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "How do I get a cURL command from Chrome or Firefox?",
+            answer:
+              "Open Developer Tools (F12) -> Network tab -> Right-click any HTTP request -> Copy -> Copy as cURL (bash). Then paste it into this tool.",
+          },
+          {
+            question: "Does this tool support JSON and Basic Auth?",
+            answer:
+              "Yes. It automatically formats JSON payloads with proper indentation and converts Basic Auth (-u username:password) into standard Authorization headers.",
+          },
+        ],
+      },
+      pt: {
+        name: "Conversor de cURL para Código (cURL Converter)",
+        shortDescription: "Converta comandos cURL para código em JavaScript (Fetch e Axios), Python (requests), Go, PHP, C# e Rust.",
+        metaTitle: "Conversor de cURL para Código Online — Fetch, Axios, Python, Go — Rápido e Privado",
+        metaDescription:
+          "Ferramenta gratuita para converter comandos curl em código limpo para JavaScript/TypeScript (Fetch, Axios), Python (requests), Go (net/http), PHP, C# e Rust.",
+        keywords: [
+          "conversor curl",
+          "curl para fetch",
+          "curl para python",
+          "curl para axios",
+          "curl para go",
+          "converter comando curl",
+        ],
+        howItWorks: {
+          title: "Como Funciona o Conversor de cURL para Código",
+          paragraphs: [
+            "cURL é a ferramenta de linha de comando mais popular para executar requisições HTTP. No dia a dia de desenvolvimento de APIs e integrações, é comum copiar comandos cURL da aba Network do navegador.",
+            "Nossa ferramenta faz a análise sintática de parâmetros (-X, -H, -d, -u, -b), extrai método, headers e payloads e gera snippets idiomáticos prontos para uso em diversas linguagens.",
+          ],
+          steps: [
+            {
+              title: "1. Cole o Comando cURL",
+              desc: "Cole o comando completo obtido no terminal ou na aba Network do navegador.",
+            },
+            {
+              title: "2. Selecione a Linguagem Desejada",
+              desc: "Alterne entre abas como Fetch, Axios, Python Requests, Go, PHP, C# ou Rust.",
+            },
+            {
+              title: "3. Copie o Código Gerado",
+              desc: "Copie o snippet funcional com 1 clique para colar direto no seu projeto.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "Como copiar um cURL do navegador?",
+            answer:
+              "Abra o DevTools (F12) -> Aba Rede (Network) -> Clique com o botão direito na requisição desejada -> Copiar -> Copiar como cURL (bash). Cole aqui e o código é gerado na hora.",
+          },
+          {
+            question: "Suporta requisições com autenticação e JSON?",
+            answer:
+              "Sim. O parser detecta automaticamente autenticação Basic/Bearer (-u, -H Authorization) e formata payloads JSON com indentação limpa.",
+          },
+        ],
+      },
+    },
+  },
+  {
+    id: "markdown-preview",
+    componentKey: "markdown-preview",
+    category: "developer",
+    iconName: "FileText",
+    isFeatured: true,
+    slugs: {
+      en: "markdown-preview",
+      pt: "visualizador-markdown",
+    },
+    locales: {
+      en: {
+        name: "Markdown & HTML Live Previewer",
+        shortDescription: "Split-view real-time Markdown editor with live HTML rendering, formatting toolbar, stats, and export.",
+        metaTitle: "Markdown & HTML Live Previewer Online — 100% Private & Fast",
+        metaDescription:
+          "Free online Markdown Live Editor and Previewer. Real-time split view, GitHub-flavored markdown (GFM) support, tables, task lists, HTML export, and word counter.",
+        keywords: [
+          "markdown previewer",
+          "markdown editor online",
+          "markdown to html",
+          "live markdown preview",
+          "github markdown editor",
+          "markdown table generator",
+        ],
+        howItWorks: {
+          title: "How the Markdown Previewer Works",
+          paragraphs: [
+            "Markdown is the lightweight markup language used across GitHub, technical documentation, and static site generators.",
+            "This tool provides a split-view live editor that compiles Markdown into semantic, sanitized HTML in real-time as you type, with support for tables, task lists, code blocks, and statistics.",
+          ],
+          steps: [
+            {
+              title: "1. Write or Paste Markdown",
+              desc: "Type directly or use the quick formatting toolbar for bold, headers, tables, and lists.",
+            },
+            {
+              title: "2. View Live Rendered HTML",
+              desc: "See immediate visual feedback with GitHub-style typography and dark mode.",
+            },
+            {
+              title: "3. Export or Download",
+              desc: "Copy raw HTML or download your document as .md or .html with 1 click.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "Which Markdown features are supported?",
+            answer:
+              "Full GitHub-Flavored Markdown (GFM): Headings (# to ######), bold, italic, strikethrough, blockquotes, code blocks with syntax styling, task lists ([ ] / [x]), tables, and links.",
+          },
+          {
+            question: "Can I download my file as HTML?",
+            answer:
+              "Yes. You can export both the raw Markdown (.md) or the compiled clean HTML (.html) file directly to your computer.",
+          },
+        ],
+      },
+      pt: {
+        name: "Editor e Visualizador Markdown em Tempo Real",
+        shortDescription: "Editor Markdown com preview HTML ao vivo lado a lado, barra de formatação, estatísticas de texto e exportação.",
+        metaTitle: "Editor e Visualizador Markdown Online — Split View — Rápido e Privado",
+        metaDescription:
+          "Ferramenta gratuita para escrever e visualizar Markdown em tempo real. Suporte a tabelas, listas de tarefas, blocos de código, exportação para HTML e contador de palavras.",
+        keywords: [
+          "editor markdown",
+          "visualizador markdown",
+          "markdown para html",
+          "preview markdown online",
+          "github markdown brasil",
+          "contador de palavras markdown",
+        ],
+        howItWorks: {
+          title: "Como Funciona o Visualizador de Markdown",
+          paragraphs: [
+            "Markdown é a linguagem de marcação simples mais utilizada no mundo para documentação de software, repositórios GitHub, blogs e READMEs.",
+            "Nossa ferramenta oferece um editor em tela dividida (Split View) com compilação instantânea para HTML semântico, suporte a tabelas, caixas de tarefas, estatísticas de leitura e botões de exportação.",
+          ],
+          steps: [
+            {
+              title: "1. Escreva no Editor",
+              desc: "Digite seu texto ou use a barra de atalhos rápidos para inserir negrito, títulos, tabelas e links.",
+            },
+            {
+              title: "2. Acompanhe o Preview ao Vivo",
+              desc: "Veja a renderização visual em tempo real estilizada no padrão moderno.",
+            },
+            {
+              title: "3. Exporte como MD ou HTML",
+              desc: "Copie o HTML gerado ou baixe os arquivos .md e .html diretamente.",
+            },
+          ],
+        },
+        faqs: [
+          {
+            question: "Quais elementos do Markdown são suportados?",
+            answer:
+              "Títulos (# a ######), negrito, itálico, tachado, citações (>), blocos de código com destaque, listas ordenadas, listas com caixas de seleção (- [ ] / - [x]), tabelas e imagens.",
+          },
+          {
+            question: "Posso exportar o resultado para HTML?",
+            answer:
+              "Sim. Você pode copiar o código HTML renderizado para a área de transferência ou baixar o arquivo .html completo com 1 clique.",
           },
         ],
       },

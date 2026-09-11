@@ -24,6 +24,10 @@ import {
   Flame,
   Globe,
   Terminal,
+  Clock,
+  Code2,
+  FileText,
+  Sliders,
 } from "lucide-react";
 import {
   siteConfig,
@@ -82,10 +86,23 @@ const iconMap = {
   KeyRound,
   Binary,
   Hash,
+  Clock,
+  Code2,
+  Terminal,
+  FileText,
+  Sliders,
 };
 
 // Rich, user-friendly presentation profiles for each tool
-const toolPresentations = {
+const toolPresentations: Record<string, {
+  badge: { pt: string; en: string };
+  whatItIs: { pt: string; en: string };
+  whatItDoes: { pt: string[]; en: string[] };
+  whyUseIt: { pt: string; en: string };
+  tags: string[];
+  accentColor: string;
+  iconBg: string;
+}> = {
   "json-formatter": {
     badge: {
       pt: "Mais Utilizado • APIs & Web",
@@ -230,6 +247,151 @@ const toolPresentations = {
     tags: ["SHA-256 / SHA-512", "MD5 Checksum", "Web Crypto API", "Cálculo Simultâneo"],
     accentColor: "border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/5",
     iconBg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+  },
+  "cron-parser": {
+    badge: {
+      pt: "Agendamentos & Automação",
+      en: "Schedules & Automation",
+    },
+    whatItIs: {
+      pt: "Analisador, tradutor em texto claro e construtor visual de expressões cron.",
+      en: "Visual cron builder, human-readable translator, and execution calculator.",
+    },
+    whatItDoes: {
+      pt: [
+        "Traduz expressões cron de 5 campos para linguagem natural em português claro.",
+        "Calcula e lista as próximas 5 datas e horários exatos de disparo com contagem regressiva.",
+        "Permite montar expressões visualmente por minuto, hora, dia, mês e dia da semana.",
+      ],
+      en: [
+        "Translates 5-field cron expressions into plain English human-readable schedules.",
+        "Computes and displays the next 5 upcoming execution timestamps with countdowns.",
+        "Provides visual selectors for minutes, hours, days, months, and weekdays.",
+      ],
+    },
+    whyUseIt: {
+      pt: "Evite erros críticos de agendamento em servidores, tarefas em background e pipelines CI/CD.",
+      en: "Avoid critical scheduling mistakes on Linux servers, cloud crons, and background queues.",
+    },
+    tags: ["Tradução em Português", "Próximos 5 Disparos", "Construtor Visual", "Presets Rápidos"],
+    accentColor: "border-teal-500/30 hover:border-teal-500/60 bg-teal-500/5",
+    iconBg: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+  },
+  "regex-tester": {
+    badge: {
+      pt: "Validação & Expressões",
+      en: "Validation & Patterns",
+    },
+    whatItIs: {
+      pt: "Testador interativo de Expressões Regulares com realce visual em tempo real.",
+      en: "Interactive Regular Expression tester with live match highlighting and group inspector.",
+    },
+    whatItDoes: {
+      pt: [
+        "Destaque visual colorido de todos os matches encontrados no texto de teste.",
+        "Inspetor de grupos de captura ($1, $2, nomeados) com posições e linhas exatas.",
+        "Modo de substituição (replace) em tempo real e biblioteca com exemplos prontos (E-mail, CPF, URL).",
+      ],
+      en: [
+        "Real-time visual color-highlighting of all regex matches in the test string.",
+        "Capture group inspector ($1, $2) with exact start/end indices and line numbers.",
+        "Live replace mode and built-in preset library (Email, Phone, CPF, IPv4, Date).",
+      ],
+    },
+    whyUseIt: {
+      pt: "Depure e valide expressões regulares complexas em microssegundos com total privacidade.",
+      en: "Debug and validate complex regexes in microseconds directly in your browser.",
+    },
+    tags: ["Highlight em Tempo Real", "Grupos de Captura", "Modo Replace", "Presets Prontos"],
+    accentColor: "border-rose-500/30 hover:border-rose-500/60 bg-rose-500/5",
+    iconBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  },
+  "timestamp-converter": {
+    badge: {
+      pt: "Tempo & Fusos Horários",
+      en: "Time & Global Epoch",
+    },
+    whatItIs: {
+      pt: "Conversor de Unix Epoch para datas legíveis e tabela de fusos horários mundiais.",
+      en: "Unix Epoch to human date converter and multi-timezone comparison table.",
+    },
+    whatItDoes: {
+      pt: [
+        "Converte timestamps em segundos e milissegundos para ISO 8601, RFC 2822 e datas locais.",
+        "Tabela comparativa em tempo real para Brasília (BRT), UTC, Nova York, Londres e Tóquio.",
+        "Relógio Epoch atual em tempo real com botão de cópia e atalhos de ajuste (+1h, +1d, +7d).",
+      ],
+      en: [
+        "Converts seconds and milliseconds to ISO 8601, RFC 2822, and localized date strings.",
+        "Side-by-side timezone matrix for Brasília (BRT), UTC, New York, London, and Tokyo.",
+        "Live ticking epoch clock with 1-click copying and quick offset adjustments (+1h, +1d).",
+      ],
+    },
+    whyUseIt: {
+      pt: "Indispensável para conferir logs de servidores, debugar APIs e converter timestamps de bancos de dados.",
+      en: "Essential for debugging API timestamps, server log inspection, and database time conversion.",
+    },
+    tags: ["Relógio em Tempo Real", "Horário de Brasília", "Fusos Mundiais", "ISO 8601 & RFC"],
+    accentColor: "border-cyan-500/30 hover:border-cyan-500/60 bg-cyan-500/5",
+    iconBg: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+  },
+  "curl-converter": {
+    badge: {
+      pt: "APIs & Integração",
+      en: "APIs & Code Generation",
+    },
+    whatItIs: {
+      pt: "Conversor universal de comandos cURL para código Fetch, Axios, Python, Go e PHP.",
+      en: "Universal cURL command to Fetch, Axios, Python Requests, Go and PHP code converter.",
+    },
+    whatItDoes: {
+      pt: [
+        "Analisa parâmetros (-X, -H, -d, -u, -b, --data-raw) e extrai URLs, headers e payloads.",
+        "Gera snippets limpos e funcionais para JavaScript (Fetch/Axios), Python, Go, PHP, C# e Rust.",
+        "Formata automaticamente payloads JSON e lida com autenticação Basic/Bearer.",
+      ],
+      en: [
+        "Parses command-line flags (-X, -H, -d, -u, -b) to extract URLs, headers, and bodies.",
+        "Generates clean, idiomatic snippets for JavaScript (Fetch/Axios), Python, Go, PHP, and C#.",
+        "Auto-formats JSON payloads with proper indentation and maps Basic/Bearer auth.",
+      ],
+    },
+    whyUseIt: {
+      pt: "Copie requisições do DevTools do navegador e transforme-as em código limpo para o seu projeto em 1 segundo.",
+      en: "Copy requests directly from browser DevTools and turn them into production code in 1 second.",
+    },
+    tags: ["Fetch & Axios", "Python Requests", "Go net/http", "Formatação JSON"],
+    accentColor: "border-orange-500/30 hover:border-orange-500/60 bg-orange-500/5",
+    iconBg: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+  },
+  "markdown-preview": {
+    badge: {
+      pt: "Documentação & Texto",
+      en: "Docs & Writing",
+    },
+    whatItIs: {
+      pt: "Editor Markdown com visualização HTML ao vivo lado a lado e barra de formatação rápida.",
+      en: "Split-view real-time Markdown editor with live HTML rendering and quick toolbar.",
+    },
+    whatItDoes: {
+      pt: [
+        "Renderização HTML instantânea com suporte completo a tabelas, blocos de código e tarefas.",
+        "Barra de atalhos para negrito, itálico, títulos, citações, tabelas, links e imagens.",
+        "Estatísticas em tempo real (palavras, caracteres, tempo de leitura) e exportação .md/.html.",
+      ],
+      en: [
+        "Instant live HTML preview supporting GFM tables, code blocks, and interactive task lists.",
+        "Quick formatting toolbar for bold, italic, headings, blockquotes, tables, and links.",
+        "Real-time stats (word count, characters, reading time) and 1-click .md/.html exports.",
+      ],
+    },
+    whyUseIt: {
+      pt: "Escreva e revise READMEs de projetos, especificações de APIs e documentações técnicas com agilidade.",
+      en: "Write and review project READMEs, API docs, and technical specifications with speed.",
+    },
+    tags: ["Split View ao Vivo", "Suporte a Tabelas", "Exportar HTML/MD", "Contador de Palavras"],
+    accentColor: "border-sky-500/30 hover:border-sky-500/60 bg-sky-500/5",
+    iconBg: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
   },
 };
 

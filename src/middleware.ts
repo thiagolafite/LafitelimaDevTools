@@ -4,14 +4,31 @@ import type { NextRequest } from "next/server";
 const SUPPORTED_LOCALES = ["en", "pt"];
 const DEFAULT_LOCALE = "pt";
 
-// Map of English tool slugs to redirect directly to /en/tools/...
-const EN_TOOL_SLUGS = [
-  "json-formatter",
-  "subnet-calculator",
-  "password-generator",
-  "base64-tool",
-  "hash-generator",
-];
+// Tool slug map for direct shortcuts and locale routing
+const SHORT_TOOL_REDIRECTS: Record<string, { lang: string; slug: string }> = {
+  // English Slugs
+  "json-formatter": { lang: "en", slug: "json-formatter" },
+  "subnet-calculator": { lang: "en", slug: "subnet-calculator" },
+  "password-generator": { lang: "en", slug: "password-generator" },
+  "base64-tool": { lang: "en", slug: "base64-tool" },
+  "hash-generator": { lang: "en", slug: "hash-generator" },
+  "curl-converter": { lang: "en", slug: "curl-converter" },
+  "markdown-preview": { lang: "en", slug: "markdown-preview" },
+
+  // Portuguese Slugs
+  "formatador-json": { lang: "pt", slug: "formatador-json" },
+  "calculadora-sub-rede": { lang: "pt", slug: "calculadora-sub-rede" },
+  "gerador-de-senhas": { lang: "pt", slug: "gerador-de-senhas" },
+  "conversor-base64": { lang: "pt", slug: "conversor-base64" },
+  "gerador-de-hash": { lang: "pt", slug: "gerador-de-hash" },
+  "conversor-curl": { lang: "pt", slug: "conversor-curl" },
+  "visualizador-markdown": { lang: "pt", slug: "visualizador-markdown" },
+
+  // Shared Slugs (default to pt)
+  cron: { lang: "pt", slug: "cron" },
+  regex: { lang: "pt", slug: "regex" },
+  timestamp: { lang: "pt", slug: "timestamp" },
+};
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -48,16 +65,35 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, { status: 308 });
   }
 
-  // 4. Intelligent redirect for tool routes without locale
+  // 4. Intelligent redirect for /tools/... routes without locale
   if (pathname.startsWith("/tools/")) {
     const slug = pathname.replace("/tools/", "").replace(/\/$/, "");
-    const targetLocale = EN_TOOL_SLUGS.includes(slug) ? "en" : "pt";
+    const mapping = SHORT_TOOL_REDIRECTS[slug];
+    const targetLocale = mapping ? mapping.lang : DEFAULT_LOCALE;
+    const targetSlug = mapping ? mapping.slug : slug;
     const url = request.nextUrl.clone();
-    url.pathname = `/${targetLocale}/tools/${slug}`;
+    url.pathname = `/${targetLocale}/tools/${targetSlug}`;
     return NextResponse.redirect(url, { status: 308 });
   }
 
-  // 5. Redirect all other unmatched routes to default locale /pt/...
+  // 5. Direct short routes (e.g. /cron, /regex, /timestamp, /curl-converter, etc.)
+  const cleanPath = pathname.replace(/^\//, "").replace(/\/$/, "");
+  if (SHORT_TOOL_REDIRECTS[cleanPath]) {
+    const target = SHORT_TOOL_REDIRECTS[cleanPath];
+    const url = request.nextUrl.clone();
+    url.pathname = `/${target.lang}/tools/${target.slug}`;
+    return NextResponse.redirect(url, { status: 308 });
+  }
+
+  // 6. Categories without locale
+  if (pathname.startsWith("/categories/")) {
+    const cat = pathname.replace("/categories/", "").replace(/\/$/, "");
+    const url = request.nextUrl.clone();
+    url.pathname = `/${DEFAULT_LOCALE}/categories/${cat}`;
+    return NextResponse.redirect(url, { status: 308 });
+  }
+
+  // 7. Redirect all other unmatched routes to default locale /pt/...
   const url = request.nextUrl.clone();
   url.pathname = `/${DEFAULT_LOCALE}${pathname}`;
   return NextResponse.redirect(url, { status: 308 });

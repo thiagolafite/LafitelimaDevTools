@@ -14,6 +14,11 @@ import { SubnetCalculator } from "@/components/tools/SubnetCalculator";
 import { PasswordGenerator } from "@/components/tools/PasswordGenerator";
 import { Base64Tool } from "@/components/tools/Base64Tool";
 import { HashGenerator } from "@/components/tools/HashGenerator";
+import { CronParser } from "@/components/tools/CronParser";
+import { RegexTester } from "@/components/tools/RegexTester";
+import { TimestampConverter } from "@/components/tools/TimestampConverter";
+import { CurlConverter } from "@/components/tools/CurlConverter";
+import { MarkdownPreviewer } from "@/components/tools/MarkdownPreviewer";
 
 interface ToolPageProps {
   params: {
@@ -106,6 +111,16 @@ export default function ToolPage({ params }: ToolPageProps) {
         return <Base64Tool lang={lang} />;
       case "hash-generator":
         return <HashGenerator lang={lang} />;
+      case "cron-parser":
+        return <CronParser lang={lang} />;
+      case "regex-tester":
+        return <RegexTester lang={lang} />;
+      case "timestamp-converter":
+        return <TimestampConverter lang={lang} />;
+      case "curl-converter":
+        return <CurlConverter lang={lang} />;
+      case "markdown-preview":
+        return <MarkdownPreviewer lang={lang} />;
       default:
         return <div>Tool component not found</div>;
     }

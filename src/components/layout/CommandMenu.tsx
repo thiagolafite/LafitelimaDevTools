@@ -10,6 +10,11 @@ import {
   KeyRound,
   Binary,
   Hash,
+  Clock,
+  Code2,
+  Terminal,
+  FileText,
+  Sliders,
   ArrowRight,
   Sparkles,
 } from "lucide-react";
@@ -30,6 +35,11 @@ const iconMap = {
   KeyRound,
   Binary,
   Hash,
+  Clock,
+  Code2,
+  Terminal,
+  FileText,
+  Sliders,
 };
 
 export function CommandMenu({ isOpen, onClose, lang }: CommandMenuProps) {

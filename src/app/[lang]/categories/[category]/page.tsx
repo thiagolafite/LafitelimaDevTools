@@ -8,6 +8,11 @@ import {
   KeyRound,
   Binary,
   Hash,
+  Clock,
+  Code2,
+  Terminal,
+  FileText,
+  Sliders,
   ArrowRight,
   ShieldCheck,
   Wrench,
@@ -79,6 +84,11 @@ const iconMap = {
   KeyRound,
   Binary,
   Hash,
+  Clock,
+  Code2,
+  Terminal,
+  FileText,
+  Sliders,
 };
 
 export default function CategoryPage({ params }: CategoryPageProps) {
