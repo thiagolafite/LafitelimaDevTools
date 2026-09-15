@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { siteConfig, SupportedLanguage } from "@/config/site";
 import {
   toolsRegistry,
@@ -42,9 +42,19 @@ export async function generateStaticParams() {
 // 2. Programmatic SEO: Generate rich metadata with canonicals and hreflang
 export async function generateMetadata({ params }: ToolPageProps): Promise<Metadata> {
   const { lang, slug } = params;
-  const match = getToolBySlug(slug, lang);
+  let match = getToolBySlug(slug, lang);
 
   if (!match) {
+    const fallback = getToolBySlug(slug);
+    if (fallback) {
+      const correctSlug = fallback.tool.slugs[lang];
+      return {
+        title: fallback.tool.locales[lang].metaTitle,
+        alternates: {
+          canonical: `${siteConfig.url}/${lang}/tools/${correctSlug}`,
+        },
+      };
+    }
     return {
       title: `Tool Not Found | ${siteConfig.name}`,
     };
@@ -89,9 +99,14 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
 // 3. Render Tool Page with Schema.org JSON-LD
 export default function ToolPage({ params }: ToolPageProps) {
   const { lang, slug } = params;
-  const match = getToolBySlug(slug, lang);
+  let match = getToolBySlug(slug, lang);
 
   if (!match) {
+    const fallback = getToolBySlug(slug);
+    if (fallback) {
+      const correctSlug = fallback.tool.slugs[lang];
+      redirect(`/${lang}/tools/${correctSlug}`);
+    }
     notFound();
   }
 
