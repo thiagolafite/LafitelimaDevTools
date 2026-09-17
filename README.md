@@ -51,44 +51,5 @@ Plataforma de alta performance construída em **Next.js 14+ (App Router)** com g
 
 ---
 
-## 🚀 Como Executar Localmente
-
-### 1. Clonar o repositório
-```bash
-git clone https://github.com/thiagolafite/LafitelimaDevTools.git
-cd LafitelimaDevTools
-```
-
-### 2. Instalar dependências
-```bash
-npm install
-```
-
-### 3. Configurar variáveis de ambiente
-Crie um arquivo `.env.local` baseado no `.env.example`:
-```env
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_ADMIN_PIN=admin123
-NEXT_PUBLIC_ADSENSE_CLIENT_ID=
-NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
-NEXT_PUBLIC_GA_MEASUREMENT_ID=
-```
-
-### 4. Iniciar o servidor de desenvolvimento
-```bash
-npm run dev
-```
-Acesse [http://localhost:3000/pt](http://localhost:3000/pt) no seu navegador.
-
----
-
-## 📦 Build para Produção
-```bash
-npm run build
-npm run start
-```
-
----
-
 ## 📄 Licença
 Este projeto está sob a licença MIT. Desenvolvido por **Lafite Lima Dev**.
